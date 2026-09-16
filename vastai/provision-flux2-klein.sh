@@ -32,33 +32,33 @@ else
 fi
 
 echo "=== Hugging Face Login ==="
-pip install --no-cache-dir -U "huggingface_hub[cli]" >/dev/null
-huggingface-cli login --token "$HF_TOKEN" --add-to-git-credential
+pip install --no-cache-dir -U huggingface_hub >/dev/null
+hf auth login --token "$HF_TOKEN" --add-to-git-credential
 
 echo "=== Text-Encoder (uncensored, q8_0 GGUF) ==="
 if [ ! -f "$MODELS_DIR/clip/flux2-klein-9b-uncensored-q8_0.gguf" ]; then
-  huggingface-cli download ponpoke/flux2-klein-9b-uncensored-text-encoder \
+  hf download ponpoke/flux2-klein-9b-uncensored-text-encoder \
     flux2-klein-9b-uncensored-q8_0.gguf \
     --local-dir "$MODELS_DIR/clip"
 fi
 
 echo "=== FLUX.2-klein-9B Transformer (FP8, 9.43 GB) ==="
 if [ ! -f "$MODELS_DIR/diffusion_models/flux-2-klein-9b-fp8.safetensors" ]; then
-  huggingface-cli download black-forest-labs/FLUX.2-klein-9b-fp8 \
+  hf download black-forest-labs/FLUX.2-klein-9b-fp8 \
     flux-2-klein-9b-fp8.safetensors \
     --local-dir "$MODELS_DIR/diffusion_models"
 fi
 
 echo "=== VAE (geteilter Decoder fuer alle FLUX.2-Varianten) ==="
 if [ ! -f "$MODELS_DIR/vae/full_encoder_small_decoder.safetensors" ]; then
-  huggingface-cli download black-forest-labs/FLUX.2-small-decoder \
+  hf download black-forest-labs/FLUX.2-small-decoder \
     full_encoder_small_decoder.safetensors \
     --local-dir "$MODELS_DIR/vae"
 fi
 
 echo "=== Upscale-Modell (4x-UltraSharp) ==="
 if [ ! -f "$MODELS_DIR/upscale_models/4x-UltraSharp.pth" ]; then
-  huggingface-cli download uwg/upscaler \
+  hf download uwg/upscaler \
     ESRGAN/4x-UltraSharp.pth \
     --local-dir "$MODELS_DIR/upscale_models"
   mv "$MODELS_DIR/upscale_models/ESRGAN/4x-UltraSharp.pth" "$MODELS_DIR/upscale_models/" 2>/dev/null || true
