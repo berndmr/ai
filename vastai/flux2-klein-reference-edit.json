@@ -1,6 +1,6 @@
 {
-  "last_node_id": 14,
-  "last_link_id": 13,
+  "last_node_id": 23,
+  "last_link_id": 29,
   "nodes": [
     {
       "id": 1,
@@ -21,7 +21,8 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            1
+            1,
+            20
           ],
           "slot_index": 0
         }
@@ -87,7 +88,9 @@
           "type": "VAE",
           "links": [
             4,
-            5
+            5,
+            18,
+            24
           ],
           "slot_index": 0
         }
@@ -314,7 +317,8 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            11
+            11,
+            21
           ],
           "slot_index": 0
         }
@@ -352,7 +356,8 @@
           "name": "CONDITIONING",
           "type": "CONDITIONING",
           "links": [
-            12
+            12,
+            22
           ],
           "slot_index": 0
         }
@@ -487,7 +492,8 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            15
+            15,
+            16
           ],
           "slot_index": 0
         }
@@ -522,6 +528,355 @@
       },
       "widgets_values": [
         "flux2-klein-edit"
+      ]
+    },
+    {
+      "id": 15,
+      "type": "ImageScale",
+      "pos": [
+        1890,
+        300
+      ],
+      "size": {
+        "0": 260,
+        "1": 130
+      },
+      "flags": {},
+      "order": 14,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 16
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            17
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageScale"
+      },
+      "widgets_values": [
+        "lanczos",
+        2048,
+        1152,
+        "disabled"
+      ]
+    },
+    {
+      "id": 16,
+      "type": "VAEEncode",
+      "pos": [
+        2200,
+        300
+      ],
+      "size": {
+        "0": 210,
+        "1": 46
+      },
+      "flags": {},
+      "order": 15,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "pixels",
+          "type": "IMAGE",
+          "link": 17
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 18
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            19
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEEncode"
+      }
+    },
+    {
+      "id": 17,
+      "type": "KSampler",
+      "pos": [
+        2460,
+        300
+      ],
+      "size": {
+        "0": 315,
+        "1": 262
+      },
+      "flags": {},
+      "order": 16,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 20
+        },
+        {
+          "name": "positive",
+          "type": "CONDITIONING",
+          "link": 21
+        },
+        {
+          "name": "negative",
+          "type": "CONDITIONING",
+          "link": 22
+        },
+        {
+          "name": "latent_image",
+          "type": "LATENT",
+          "link": 19
+        }
+      ],
+      "outputs": [
+        {
+          "name": "LATENT",
+          "type": "LATENT",
+          "links": [
+            23
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "KSampler"
+      },
+      "widgets_values": [
+        42,
+        "randomize",
+        8,
+        1.0,
+        "euler",
+        "simple",
+        0.35
+      ]
+    },
+    {
+      "id": 18,
+      "type": "VAEDecode",
+      "pos": [
+        2830,
+        300
+      ],
+      "size": {
+        "0": 210,
+        "1": 46
+      },
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "samples",
+          "type": "LATENT",
+          "link": 23
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": 24
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            25,
+            26
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VAEDecode"
+      }
+    },
+    {
+      "id": 19,
+      "type": "SaveImage",
+      "pos": [
+        3140,
+        300
+      ],
+      "size": {
+        "0": 300,
+        "1": 270
+      },
+      "flags": {},
+      "order": 18,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 25
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "flux2-klein-edit-refined"
+      ]
+    },
+    {
+      "id": 20,
+      "type": "UpscaleModelLoader",
+      "pos": [
+        2830,
+        500
+      ],
+      "size": {
+        "0": 260,
+        "1": 60
+      },
+      "flags": {},
+      "order": 19,
+      "mode": 0,
+      "outputs": [
+        {
+          "name": "UPSCALE_MODEL",
+          "type": "UPSCALE_MODEL",
+          "links": [
+            27
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UpscaleModelLoader"
+      },
+      "widgets_values": [
+        "4x-UltraSharp.pth"
+      ]
+    },
+    {
+      "id": 21,
+      "type": "ImageUpscaleWithModel",
+      "pos": [
+        3140,
+        500
+      ],
+      "size": {
+        "0": 260,
+        "1": 60
+      },
+      "flags": {},
+      "order": 20,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "upscale_model",
+          "type": "UPSCALE_MODEL",
+          "link": 27
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 26
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            28
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageUpscaleWithModel"
+      }
+    },
+    {
+      "id": 22,
+      "type": "ImageScale",
+      "pos": [
+        3450,
+        500
+      ],
+      "size": {
+        "0": 260,
+        "1": 130
+      },
+      "flags": {},
+      "order": 21,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 28
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            29
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "ImageScale"
+      },
+      "widgets_values": [
+        "lanczos",
+        3840,
+        2160,
+        "disabled"
+      ]
+    },
+    {
+      "id": 23,
+      "type": "SaveImage",
+      "pos": [
+        3750,
+        500
+      ],
+      "size": {
+        "0": 300,
+        "1": 270
+      },
+      "flags": {},
+      "order": 22,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 29
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveImage"
+      },
+      "widgets_values": [
+        "flux2-klein-edit-final-4k"
       ]
     }
   ],
@@ -643,6 +998,118 @@
       13,
       0,
       14,
+      0,
+      "IMAGE"
+    ],
+    [
+      16,
+      13,
+      0,
+      15,
+      0,
+      "IMAGE"
+    ],
+    [
+      17,
+      15,
+      0,
+      16,
+      0,
+      "IMAGE"
+    ],
+    [
+      18,
+      3,
+      0,
+      16,
+      1,
+      "VAE"
+    ],
+    [
+      19,
+      16,
+      0,
+      17,
+      3,
+      "LATENT"
+    ],
+    [
+      20,
+      1,
+      0,
+      17,
+      0,
+      "MODEL"
+    ],
+    [
+      21,
+      9,
+      0,
+      17,
+      1,
+      "CONDITIONING"
+    ],
+    [
+      22,
+      10,
+      0,
+      17,
+      2,
+      "CONDITIONING"
+    ],
+    [
+      23,
+      17,
+      0,
+      18,
+      0,
+      "LATENT"
+    ],
+    [
+      24,
+      3,
+      0,
+      18,
+      1,
+      "VAE"
+    ],
+    [
+      25,
+      18,
+      0,
+      19,
+      0,
+      "IMAGE"
+    ],
+    [
+      26,
+      18,
+      0,
+      21,
+      1,
+      "IMAGE"
+    ],
+    [
+      27,
+      20,
+      0,
+      21,
+      0,
+      "UPSCALE_MODEL"
+    ],
+    [
+      28,
+      21,
+      0,
+      22,
+      0,
+      "IMAGE"
+    ],
+    [
+      29,
+      22,
+      0,
+      23,
       0,
       "IMAGE"
     ]
