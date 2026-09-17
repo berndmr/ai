@@ -24,12 +24,14 @@ mkdir -p /dev/shm/comfy-secure-output /dev/shm/comfy-secure-input
 mkdir -p "$MODELS_DIR/diffusion_models" "$MODELS_DIR/clip" "$MODELS_DIR/vae" "$MODELS_DIR/upscale_models"
 
 echo "=== ComfyUI-GGUF Custom Node ==="
+# WICHTIG: venv aktivieren, sonst installiert pip in die falsche Umgebung -
+# ComfyUI selbst aktiviert /venv/main beim Start (siehe comfyui.sh), das
+# Provisioning laeuft aber in einem anderen Kontext ohne aktiviertes venv.
+. /venv/main/bin/activate
 if [ ! -d "$CUSTOM_NODES_DIR/ComfyUI-GGUF" ]; then
   git clone --depth 1 https://github.com/city96/ComfyUI-GGUF "$CUSTOM_NODES_DIR/ComfyUI-GGUF"
-  pip install --no-cache-dir -r "$CUSTOM_NODES_DIR/ComfyUI-GGUF/requirements.txt" || true
-else
-  echo "bereits vorhanden, ueberspringe"
 fi
+pip install --no-cache-dir -r "$CUSTOM_NODES_DIR/ComfyUI-GGUF/requirements.txt"
 
 echo "=== Hugging Face Login ==="
 pip install --no-cache-dir -U huggingface_hub >/dev/null
