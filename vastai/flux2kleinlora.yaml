@@ -23,7 +23,7 @@ config:
         dtype: "bf16"
         save_every: 250
         max_step_saves_to_keep: 4
-        save_format: "diffusers"
+        save_format: "safetensors"
         push_to_hub: false
       datasets:
         - folder_path: "/dev/shm/ai-toolkit-datasets/test"
@@ -102,8 +102,7 @@ config:
         height: 1024
         samples:
           - prompt: "[trigger], white background, studio lighting, medium shot"
-          - prompt: "[trigger], standing on a flower field"
-          - prompt: "[trigger], sitting on a bench in the forest"
+          - prompt: "[trigger], side profile, outdoor natural lighting"
         neg: ""
         seed: 42
         walk_seed: true
