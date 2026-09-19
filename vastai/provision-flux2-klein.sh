@@ -18,8 +18,14 @@ WORKSPACE="${WORKSPACE:-/workspace}"
 MODELS_DIR="$WORKSPACE/ComfyUI/models"
 CUSTOM_NODES_DIR="$WORKSPACE/ComfyUI/custom_nodes"
 
-echo "=== RAM-Output-Verzeichnisse anlegen (sonst crasht ComfyUI beim Start) ==="
-mkdir -p /dev/shm/comfy-secure-output /dev/shm/comfy-secure-input
+: "${HF_TOKEN:?HF_TOKEN ist nicht gesetzt}"
+
+echo "=== RAM-Verzeichnisse anlegen (sonst crasht ComfyUI beim Start) ==="
+# Alle vier Pfade aus COMFYUI_ARGS. /dev/shm ist nach stop/start leer und dieses
+# Skript laeuft dann NICHT erneut - deshalb legt zusaetzlich die --onstart-cmd
+# die Verzeichnisse bei jedem Boot an. Hier nur als Absicherung fuer den ersten Boot.
+mkdir -p -m 700 /dev/shm/comfy-secure-output /dev/shm/comfy-secure-input \
+  /dev/shm/comfy-secure-temp /dev/shm/comfy-secure-user /dev/shm/tmp
 
 mkdir -p "$MODELS_DIR/diffusion_models" "$MODELS_DIR/clip" "$MODELS_DIR/vae" "$MODELS_DIR/upscale_models"
 
@@ -33,9 +39,11 @@ if [ ! -d "$CUSTOM_NODES_DIR/ComfyUI-GGUF" ]; then
 fi
 pip install --no-cache-dir -r "$CUSTOM_NODES_DIR/ComfyUI-GGUF/requirements.txt"
 
-echo "=== Hugging Face Login ==="
+echo "=== Hugging Face CLI ==="
+# Kein "hf auth login": das wuerde den Token nach ~/.cache/huggingface/token und
+# (mit --add-to-git-credential) im Klartext nach ~/.git-credentials auf die Disk
+# schreiben. "hf download" liest HF_TOKEN direkt aus der Umgebung.
 pip install --no-cache-dir -U huggingface_hub >/dev/null
-hf auth login --token "$HF_TOKEN" --add-to-git-credential
 
 echo "=== Text-Encoder (uncensored, q8_0 GGUF) ==="
 if [ ! -f "$MODELS_DIR/clip/flux2-klein-9b-uncensored-q8_0.gguf" ]; then
