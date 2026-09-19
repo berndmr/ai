@@ -5,7 +5,7 @@ config:
   process:
     - type: "diffusion_trainer"
       training_folder: "/dev/shm/ai-toolkit-output"
-      sqlite_db_path: "./aitk_db.db"
+      sqlite_db_path: "/dev/shm/aitk_db.db"
       device: "cuda"
       trigger_word: "peter"
       performance_log_every: 10
