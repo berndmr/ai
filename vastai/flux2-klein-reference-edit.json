@@ -454,7 +454,7 @@
       "widgets_values": [
         42,
         "randomize",
-        4,
+        6,
         1.0,
         "euler",
         "simple",
@@ -667,7 +667,7 @@
         1.0,
         "euler",
         "simple",
-        0.20
+        0.15
       ]
     },
     {
