@@ -21,11 +21,23 @@ CUSTOM_NODES_DIR="$WORKSPACE/ComfyUI/custom_nodes"
 : "${HF_TOKEN:?HF_TOKEN ist nicht gesetzt}"
 
 echo "=== RAM-Verzeichnisse anlegen (sonst crasht ComfyUI beim Start) ==="
-# Alle vier Pfade aus COMFYUI_ARGS. /dev/shm ist nach stop/start leer und dieses
-# Skript laeuft dann NICHT erneut - deshalb legt zusaetzlich die --onstart-cmd
+# Alle vier Pfade aus COMFYUI_ARGS plus das LoRA-Verzeichnis (extra_model_paths.yaml).
+# /dev/shm ist nach stop/start leer und dieses Skript laeuft dann NICHT erneut - deshalb legt zusaetzlich die --onstart-cmd
 # die Verzeichnisse bei jedem Boot an. Hier nur als Absicherung fuer den ersten Boot.
 mkdir -p -m 700 /dev/shm/comfy-secure-output /dev/shm/comfy-secure-input \
-  /dev/shm/comfy-secure-temp /dev/shm/comfy-secure-user /dev/shm/tmp
+  /dev/shm/comfy-secure-temp /dev/shm/comfy-secure-user /dev/shm/comfy-secure-loras /dev/shm/tmp
+
+echo "=== LoRA-Suchpfad /dev/shm/comfy-secure-loras eintragen ==="
+# ComfyUI liest LoRAs dann zusaetzlich zu models/loras aus dem RAM-Verzeichnis -
+# keine einzelnen Symlinks noetig. Neue Dateien erscheinen nach "R" (Refresh) im Browser.
+EXTRA_PATHS="$WORKSPACE/ComfyUI/extra_model_paths.yaml"
+if ! grep -qs "comfy-secure-loras" "$EXTRA_PATHS"; then
+  cat >> "$EXTRA_PATHS" <<'YAML'
+
+secure_ram:
+    loras: /dev/shm/comfy-secure-loras
+YAML
+fi
 
 mkdir -p "$MODELS_DIR/diffusion_models" "$MODELS_DIR/clip" "$MODELS_DIR/vae" "$MODELS_DIR/upscale_models"
 
